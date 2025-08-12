@@ -32,12 +32,6 @@ jobs:
 
       - name: Show Terraform plan summary
         run: tail -n 10 plan.txt
-    
-      - name: Upload Terraform plan artifact
-        uses: actions/upload-artifact@v4
-        with:
-            name: tfplan-pr-latest
-            path: tfplan
 
       - name: Run plan validation and PR merge script
         env:
