@@ -37,14 +37,11 @@ jobs:
       - name: Parse Plan with Node.js
         run: node scripts/parse-plan.js
       
-      - name: Merge PR if safe
-        if: success()
+      - name: Run plan check and merge script
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "Merging PR #$PR_NUMBER"
-          gh pr merge $PR_NUMBER --merge --admin
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/plan-check-and-merge.js
 
       - name: Checkout main after merge
         if: success()
