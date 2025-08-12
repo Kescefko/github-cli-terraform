@@ -10,6 +10,8 @@ jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout main branch
@@ -27,6 +29,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: tfplan-pr-latest
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Apply Terraform changes from PR plan
         run: terraform apply -auto-approve tfplan
