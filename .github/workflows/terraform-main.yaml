@@ -1,9 +1,6 @@
 name: Terraform
 
 on:
-  # push:
-  #   branches:
-  #     - main
   pull_request:
 
 jobs:
@@ -31,7 +28,10 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan > plan.txt
+        run: terraform plan -no-color -out=tfplan > plan.txt
+
+      - name: Debug plan.txt content
+        run: cat plan.txt
       
       - name: Run plan check and merge script
         env:
