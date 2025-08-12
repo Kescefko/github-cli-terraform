@@ -24,7 +24,7 @@ jobs:
       - name: Download Terraform plan artifact
         uses: actions/download-artifact@v3
         with:
-          name: tfplan
+          name: tfplan-pr-${{ github.sha }}
 
       - name: Apply Terraform changes from PR plan
         run: terraform apply -auto-approve tfplan
