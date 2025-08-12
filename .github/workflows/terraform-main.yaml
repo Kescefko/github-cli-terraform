@@ -14,7 +14,6 @@ jobs:
       contents: write
 
     steps:
-      # Check out repo
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -34,14 +33,11 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan > plan.txt
       
-      - name: Parse Plan with Node.js
-        run: node scripts/parse-plan.js
-      
       - name: Run plan check and merge script
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/plan-check-and-merge.js
+        run: node scripts/parse-plan.js
 
       - name: Checkout main after merge
         if: success()
