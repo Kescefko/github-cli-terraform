@@ -1,12 +1,14 @@
 name: Terraform Deploy on Main
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Terraform PR Validation and Auto-Merge"]
+    types:
+      - completed
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +26,7 @@ jobs:
       - name: Download Terraform plan artifact
         uses: actions/download-artifact@v5
         with:
-          name: tfplan-pr-${{ github.sha }}
+          name: tfplan-pr-${{ github.event.workflow_run.head_sha }}
 
       - name: Apply Terraform changes from PR plan
         run: terraform apply -auto-approve tfplan
