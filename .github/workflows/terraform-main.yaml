@@ -1,50 +1,30 @@
-name: Terraform
+name: Terraform Deploy on Main
 
 on:
-  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
-  terraform:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout main branch
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
-      - name: Setup Terraform
+      - name: Setup Terraform CLI
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.1.7"
 
-      - name: Terraform Init
+      - name: Initialize Terraform
         run: terraform init
 
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        run: terraform plan -no-color -out=tfplan > plan.txt
-
-      - name: Debug plan.txt content
-        run: cat plan.txt
-      
-      - name: Run plan check and merge script
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/parse-plan.js
-
-      - name: Checkout main after merge
-        if: success()
-        uses: actions/checkout@v4
+      - name: Download Terraform plan artifact
+        uses: actions/download-artifact@v3
         with:
-          ref: main
+          name: tfplan
 
-      - name: Terraform Apply
+      - name: Apply Terraform changes from PR plan
         run: terraform apply -auto-approve tfplan
-        

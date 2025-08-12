@@ -1,0 +1,46 @@
+name: Terraform PR Validation and Auto-Merge
+
+on:
+  pull_request:
+
+jobs:
+  validate-and-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Validate Terraform configuration
+        run: terraform validate
+
+      - name: Generate Terraform plan and save output
+        run: terraform plan -no-color -out=tfplan > plan.txt
+
+      - name: Show Terraform plan summary
+        run: tail -n 10 plan.txt
+    
+      - name: Upload Terraform plan artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: tfplan
+            path: tfplan
+
+      - name: Run plan validation and PR merge script
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/parse-plan-and-merge.js
