@@ -14,7 +14,7 @@ function parsePlan() {
   const [add, change, destroy] = match.slice(1).map(Number);
   console.log(`Detected plan: add=${add}, change=${change}, destroy=${destroy}`);
 
-  if (add === 0 && change === 2 && destroy === 0) {
+  if (add === 1 && change === 0 && destroy === 0) {
     console.log("Plan matches expected criteria.");
     return true;
   } else {
