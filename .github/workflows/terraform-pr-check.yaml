@@ -34,7 +34,7 @@ jobs:
         run: tail -n 10 plan.txt
     
       - name: Upload Terraform plan artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
             name: tfplan-pr-${{ github.sha }}
             path: tfplan
