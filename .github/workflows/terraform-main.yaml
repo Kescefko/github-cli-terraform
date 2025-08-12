@@ -22,7 +22,7 @@ jobs:
         run: terraform init
 
       - name: Download Terraform plan artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: tfplan-pr-${{ github.sha }}
 
