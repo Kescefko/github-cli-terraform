@@ -1,14 +1,10 @@
 name: Terraform Deploy on Main
 
 on:
-  workflow_run:
-    workflows: ["Terraform PR Validation and Auto-Merge"]
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,11 +21,8 @@ jobs:
       - name: Initialize Terraform
         run: terraform init
 
-      - name: Download Terraform plan artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: tfplan-pr-latest
-          run-id: ${{ github.event.workflow_run.id }}
+      - name: Generate new Terraform plan for apply
+        run: terraform plan -no-color -out=tfplan
 
       - name: Apply Terraform changes from PR plan
         run: terraform apply -auto-approve tfplan
