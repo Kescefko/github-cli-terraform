@@ -1,9 +1,6 @@
 resource "local_file" "foo" {
-  content  = "foo!"
-  filename = "${path.module}/foo.txt"
-}
-
-resource "local_file" "bar" {
-  content  = "bar!"
-  filename = "${path.module}/bar.txt"
+  content = "foo modified!"
+  filename = "./foo.txt"
+  directory_permission = "0777"
+  file_permission = "0777"
 }
